@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    
+    <title>Google Map API Demo</title>
+    <style type="text/css">
+        html, body, #map {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+		#floating-panel{
+			 position: absolute;
+    top: 10px;
+    left: 25%;
+    z-index: 5;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+    text-align: center;
+    font-family: "Roboto", "sans-serif";
+    line-height: 30px;
+    padding-left: 10px;
+		}
+		
+    </style>
+</head>
+<body>
+	<div id="floating-panel">
+      <b>Điểm đi: </b>
+      <select id="Start">
+        <option value="35/5 Bình Lợi, phường 13, quận Bình Thạnh, thành phố Hồ Chí Minh " id="NhaTro">Nhà trọ Đào Huỳnh Nhất</option>
+      </select>
+      <b>Điểm đến: </b>
+      <select id="End">
+        <option value="Tinh Hoa Solutions" id="THS">THS</option>
+      </select>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNI_ZWPqvdS6r6gPVO50I4TlYkfkZdXh8&callback=initMap&libraries=&v=weekly"
+        async>
+    </script>
+    <script>
+        function initMap() {
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer();
+            const THS = { lat: 10.82710, lng: 106.70582 };
+            const NhaTro = { lat:10.837821, lng:106.71447};
+            const iconTHS = {
+                url: "LogoTHS.jpg",
+                scaledSize: new google.maps.Size(25, 25),
+                origin: new google.maps.Point(0,0),
+                anchor: new google.maps.Point(0, 0)
+            };
+            const iconNhaTro = {
+                url: "DAOHUYNHNHAT.jpg",
+                scaledSize: new google.maps.Size(25, 25),
+                origin: new google.maps.Point(0,0),
+                anchor: new google.maps.Point(0, 0)
+            };
+            const infoUTC2 = "Tinh Hoa Solutions";
+            const infoNhaTro = "<div>Họ và tên:Đào Huỳnh Nhất<br/>Tuổi: 22 Tuổi<br/>Ngày sinh: 09-09-2000<br/>Quê quán: Phú Yên<br/>Email: daouynhat@gmail.om<br/>SĐT: 0386472774</div>";
+
+            // Tải Map
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 20,
+                center: THS
+            });
+            directionsRenderer.setMap(map);
+
+            // Tạo Icon
+            const markerTHS = new google.maps.Marker({
+                position: THS,
+                map: map,
+                title: "THS",
+                draggable: true,
+                icon: iconTHS,
+                animation: google.maps.Animation.DROP,
+            });
+            const markerNhaTro = new google.maps.Marker({
+                position: NhaTro,
+                map: map,
+                title: "Nhà trọ",
+                draggable: true,
+                icon: iconNhaTro,
+                animation: google.maps.Animation.DROP,
+            });
+
+            // Tạo Infor
+            const infoTHSLoad = new google.maps.InfoWindow({
+                content: infoTHS
+            });
+            markerTHS.addListener("click", () => infoTHSLoad.open(map, markerTHS));
+
+            const infoNhaTroLoad = new google.maps.InfoWindow({
+                content: infoNhaTro
+            });
+            markerNhaTro.addListener("click", () => infoNhaTroLoad.open(map, markerNhaTro));
+
+            // Tạo Chỉ đường
+            function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+            directionsService.route(
+                {
+                    origin: NhaTro,
+                    destination: THS,
+                    travelMode: google.maps.TravelMode.DRIVING,
+                },
+                (response, status) => {
+                    if (status === "OK") {
+                        directionsRenderer.setDirections(response);
+                    } else {window.alert("Directions request failed due to " + status);}});
+        }
+        calculateAndDisplayRoute(directionsService, directionsRenderer);
+        }
+    </script>
+</body>
+</html>
